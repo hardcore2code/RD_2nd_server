@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="GBK">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>危废车辆位置信息</title>
+    <style>
+        body,#mapContainer{
+            margin:0;
+            height:100%;
+            width:100%;
+            font-size:12px;
+        }
+    </style>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main.css?v=1.0?v=1.0" />
+    <script src="http://cache.amap.com/lbs/static/es5.min.js"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.1&key=b2293326c29d69bd823094482fde92e2&plugin=AMap.ToolBar"></script>
+    <script>
+        function init() {
+            map = new AMap.Map("mapContainer", {
+                zoom: 16,
+                center:[###y###,###x###]
+            });
+            marker = new AMap.Marker({
+                map:map,
+                position:[###y###,###x###]
+            })
+            marker.setLabel({
+                offset: new AMap.Pixel(20, 20),//修改label相对于maker的位置
+                content: "车牌号：###pzh###<br/>联单号：###tbId###<br/>司机姓名：###sjxm###<br/>废物名称：###fwmc###<br/>数量：###sl###<br/>计量单位：###jldw###"
+            });
+            marker.on('click',function(e){
+                marker.markOnAMAP({
+                    name:'车辆位置',
+                    position:marker.getPosition()
+                })
+            })
+            map.addControl(new AMap.ToolBar());
+            if(AMap.UA.mobile){
+                document.getElementById('button_group').style.display='none';
+            }
+        }
+    </script>
+</head>
+<body onload="init()">
+    <div id="mapContainer"  ></div>
+    <div class="button-group" id='button_group' style='top:15px;bottom:inherit'>
+    </div>
+</body>
+</html>

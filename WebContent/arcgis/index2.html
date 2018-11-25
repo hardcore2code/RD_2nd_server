@@ -1,0 +1,72 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/esri/css/esri.css" />
+    <script type="text/javascript" src="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/init.js"></script>
+    <script type="text/javascript">
+   	  var temp = 0.1;
+      require(["esri/map","esri/urlUtils","esri/InfoTemplate","esri/geometry/Point", "esri/SpatialReference",  
+               "esri/symbols/SimpleMarkerSymbol", "esri/graphic","dojo/on","dojo/dom","esri/dijit/Popup","esri/symbols/SimpleFillSymbol","esri/symbols/SimpleLineSymbol","esri/Color","dojo/dom-construct","dojo/domReady!"],function(Map,urlUtils,InfoTemplate,Point, SpatialReference, SimpleMarkerSymbol, Graphic,on,dom,Popup,SimpleFillSymbol,SimpleLineSymbol,Color,domConstruct){
+   	 	  urlUtils.addProxyRule({
+           	urlPrefix: "http://127.0.0.1:6080/arcgis/rest/services/",
+           	proxyUrl: "proxy.jsp"
+      	  });
+   	 	  var bounds = new esri.geometry.Extent({"xmin":485263.408,"ymin":4317522.127,"xmax":558023.970,"ymax":4355159.182,"spatialReference":{"wkid":2384}});
+   	 	var popup = new Popup({
+            fillSymbol: new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+              new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                new Color([255, 0, 0]), 2), new Color([255, 255, 0, 0.25]))
+          }, domConstruct.create("div"));
+
+   	 	  var myMap = new Map("mapDiv",{
+            //center:[113, 37],
+            extent: bounds,
+            zoom:3,
+            logo:false,
+            infoWindow: popup
+          }); 
+          
+
+          var myTiledMapServiceLayer = new esri.layers.ArcGISTiledMapServiceLayer("http://127.0.0.1:6080/arcgis/rest/services/tianjin/tianjin/MapServer");  
+          myMap.addLayer(myTiledMapServiceLayer);
+          on(dom.byId("cli"),"click",function(){
+        	  var temp = dom.byId("val").value;
+        	  var aa = parseFloat(117)+parseFloat(temp);
+        	  var tt = parseFloat(aa);
+        	  ShowLocation(tt,39);
+          })
+          on(dom.byId("centerbtn"),"click",function(){
+        	  myMap.centerAt(new Point({"x": 518222.429, "y": 4330051.202, "spatialReference": {"wkid": 2384 } }));
+          })
+          /* window.setInterval(showalert, 10*1000);
+		  function showalert()
+		  {
+			  var aa = parseFloat(117.13)+parseFloat(temp++);
+        	  var tt = parseFloat(aa);
+			  ShowLocation(tt,39.6)
+		  }  */
+		  
+          function ShowLocation(x, y) {  
+              var point = new Point({"x": 518222.429, "y": 4330051.202, "spatialReference": {"wkid": 2384 } });  
+              //var point = new Point(x, y, new SpatialReference({wkid:4326}));  
+              var simpleMarkerSymbol = new SimpleMarkerSymbol();  
+              var graphic = new Graphic(point, simpleMarkerSymbol);  
+
+              myMap.graphics.add(graphic);  
+              myMap.infoWindow.show(point);
+   
+          };  
+      });
+      
+    </script>
+  </head>
+  <body class="tundra">
+    <div id="mapDiv" style="width:900px; height:600px; border:1px solid #000;"></div>
+    <input id="val" type="text">
+    <button id="cli"> click me </button>
+    <button id="centerbtn"> centerbtn </button>
+  </body>
+</html>

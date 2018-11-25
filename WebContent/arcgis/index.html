@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Simple Map</title>
+    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/dijit/themes/tundra/tundra.css"/>
+    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/esri/css/esri.css" />
+    <script type="text/javascript" src="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/init.js"></script>
+    <script type="text/javascript">
+   	  var temp = 0.1;
+      
+	require(
+			[ "esri/map", "esri/urlUtils", "esri/InfoTemplate",
+			  "esri/dijit/InfoWindow",
+					"esri/dijit/InfoWindowLite",
+					"esri/layers/FeatureLayer",
+					"esri/geometry/Point",
+					"esri/SpatialReference",
+					"esri/symbols/SimpleMarkerSymbol",
+					"esri/graphic", "dojo/on", "dojo/dom",
+					"esri/dijit/Popup",
+					"esri/Color", "dojo/dom-construct",
+					"esri/symbols/PictureMarkerSymbol",
+					"dojo/domReady!" ],
+			function(Map, urlUtils, InfoTemplate,InfoWindow,
+					InfoWindowLite, FeatureLayer, Point,
+					SpatialReference, SimpleMarkerSymbol,
+					Graphic, on, dom, Popup, Color, domConstruct,PictureMarkerSymbol) {
+				urlUtils
+						.addProxyRule({
+							urlPrefix : "http://127.0.0.1:6080/arcgis/rest/services/",
+							proxyUrl : "proxy.jsp"
+						});
+				var bounds = new esri.geometry.Extent({
+					"xmin" : 485263.408,
+					"ymin" : 4317522.127,
+					"xmax" : 558023.970,
+					"ymax" : 4355159.182,
+					"spatialReference" : {
+						"wkid" : 2384
+					}
+				});
+
+				var myMap = new Map("mapDiv", {
+					//center:[113, 37],
+					extent : bounds,
+					zoom : 3,
+					logo : false,
+					infoWindow: infoWindow
+				});
+				var infoWindow = new InfoWindow({}, domConstruct.create("div"));
+
+				infoWindow.startup();
+
+				var myTiledMapServiceLayer = new esri.layers.ArcGISTiledMapServiceLayer(
+						"http://127.0.0.1:6080/arcgis/rest/services/tianjin/tianjin/MapServer");
+				myMap.addLayer(myTiledMapServiceLayer);
+				console.log(myMap.graphics);
+				on(dom.byId("cli"), "click",
+						function() {
+							ShowLocation(518222.429, 4330051.202);
+							//myMap.graphics.on("mouse-over", function (evt) {
+				            //        console.log("graphicslayer:mouse-over");
+			                //});
+						});
+				on(dom.byId("cli2"), "click",
+						function() {
+							ShowLocation(526830.947, 4332358.214);
+						});
+				on(dom.byId("centerbtn"), "click", function() {
+					myMap.centerAt(getPoint(518222.429,4330051.202));
+				})
+				on(dom.byId("centerInfobtn"), "click", function(pointEvent) {
+					var point = getPoint(518222.429,4330051.202);
+					myMap.infoWindow.setTitle("好的");
+					myMap.infoWindow.setContent("12345");
+					myMap.infoWindow.show(point);
+				})
+				on(dom.byId("clearPointbtn"), "click", function(pointEvent) {
+					myMap.graphics.clear();
+				})
+				on(dom.byId("removePointbtn"), "click", function(pointEvent) {
+					myMap.graphics.graphics.forEach(function(item, index, array) {
+						
+						if(item.geometry.x == 518222.429 && item.geometry.y == 4330051.202)
+						{
+							//console.log(item.geometry.x+"<==>"+item.geometry.y)
+							myMap.graphics.remove(item);
+						}
+					});
+					
+				})
+				/* window.setInterval(showalert, 10*1000);
+				function showalert()
+				{
+				  var aa = parseFloat(117.13)+parseFloat(temp++);
+				  var tt = parseFloat(aa);
+				  ShowLocation(tt,39.6)
+				}  */
+
+				function ShowLocation(x, y) {
+					var point = getPoint(x,y);
+					//var point = new Point(x, y, new SpatialReference({wkid:4326}));  
+					var simpleMarkerSymbol = new SimpleMarkerSymbol();
+					//var picBaseUrl = "https://static.arcgis.com/images/Symbols/Shapes/";
+					var picBaseUrl = "http://127.0.0.1:9016/arcgis/img/";
+			        var blueSymbol = new PictureMarkerSymbol(picBaseUrl + "car.png", 32, 32).setOffset(0, 15);
+			        var attr = {"Xcoord":x,"Ycoord":y,"Plant":"Mesa Mint"};
+			        var infoTemplate = new InfoTemplate("Vernal Pool Locations","Latitude: ${Ycoord} <br/>Longitude: ${Xcoord} </br>Plant Name:${Plant}");
+
+					var graphic = new Graphic(point,blueSymbol,attr,infoTemplate);
+					myMap.graphics.add(graphic);
+					
+					var point1 = getPoint(513898.799,4332640.809);
+					//var point = new Point(x, y, new SpatialReference({wkid:4326}));  
+					var simpleMarkerSymbol1 = new SimpleMarkerSymbol();
+					//var picBaseUrl = "https://static.arcgis.com/images/Symbols/Shapes/";
+					var picBaseUrl1 = "http://127.0.0.1:9016/img/";
+			        var blueSymbol1 = new PictureMarkerSymbol(picBaseUrl1 + "housered.png", 32, 32).setOffset(0, 15);
+			        var attr1 = {"Xcoord":x,"Ycoord":y,"Plant":"Mesa Mint"};
+			        var infoTemplate1 = new InfoTemplate("Vernal Pool Locations","Latitude: ${Ycoord} <br/>Longitude: ${Xcoord} </br>Plant Name:${Plant}");
+
+					var graphic1 = new Graphic(point1,blueSymbol1,attr1,infoTemplate1);
+					myMap.graphics.add(graphic1);
+					
+					
+					var point2 = getPoint(513343.173,4336040.711);
+					//var point = new Point(x, y, new SpatialReference({wkid:4326}));  
+					var simpleMarkerSymbol2 = new SimpleMarkerSymbol();
+					//var picBaseUrl = "https://static.arcgis.com/images/Symbols/Shapes/";
+					var picBaseUrl2 = "http://127.0.0.1:9016/img/";
+			        var blueSymbol2 = new PictureMarkerSymbol(picBaseUrl2 + "cargreen.png", 32, 32).setOffset(0, 15);
+			        var attr2 = {"Xcoord":x,"Ycoord":y,"Plant":"Mesa Mint"};
+			        var infoTemplate2 = new InfoTemplate("车辆信息","所属单位: xxxxx <br/>牌照号: xxxxx </br>运输废物详情:xxxxx</br>xxxxxx");
+
+					var graphic2 = new Graphic(point2,blueSymbol2,attr2,infoTemplate2);
+					myMap.graphics.add(graphic2);
+					
+					var point3 = getPoint(513239.097,4331838.485);
+					//var point = new Point(x, y, new SpatialReference({wkid:4326}));  
+					var simpleMarkerSymbol3 = new SimpleMarkerSymbol();
+					//var picBaseUrl = "https://static.arcgis.com/images/Symbols/Shapes/";
+					var picBaseUrl3 = "http://127.0.0.1:9016/img/";
+			        var blueSymbol3 = new PictureMarkerSymbol(picBaseUrl3 + "car.png", 32, 32).setOffset(0, 15);
+			        var attr3 = {"Xcoord":x,"Ycoord":y,"Plant":"Mesa Mint"};
+			        var infoTemplate3 = new InfoTemplate("Vernal Pool Locations","Latitude: ${Ycoord} <br/>Longitude: ${Xcoord} </br>Plant Name:${Plant}");
+
+					var graphic3 = new Graphic(point3,blueSymbol3,attr3,infoTemplate3);
+					myMap.graphics.add(graphic3);
+				};
+				
+				function getPoint(x,y)
+				{
+					var point = new Point({
+						"x" : x,
+						"y" : y,
+						"spatialReference" : {
+							"wkid" : 2384
+						}
+					});
+					return point;
+				}
+			});
+  </script>
+  </head>
+  <body class="tundra">
+    <div id="mapDiv" style="width:900px; height:600px; border:1px solid #000;"></div>
+    <input id="val" type="text">
+    <button id="cli"> click me </button>
+    <button id="cli2"> click me2 </button>
+    <button id="centerbtn"> centerbtn </button>
+    <button id="centerInfobtn"> Infobtn </button>
+    <button id="clearPointbtn"> clearPointbtn </button>
+    <button id="removePointbtn"> removePointbtn </button>
+  </body>
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="jquery.js"></script>
+	<meta charset="utf-8" />
+    <script type="text/javascript">
+        $(function () {
+            $("#btnSend").click(function () {
+               
+                $.ajax({
+                    type: "POST",
+                    url:"http://localhost:9001/demo",
+                    contentType: "application/x-www-form-urlencoded",
+                    data: JSON.stringify(GetJsonData()),
+                    //data:{id:"123"},
+                    dataType: "json",
+                    success: function (rs) {
+                        alert(JSON.stringify(rs));
+                    },
+                    error: function (message) {
+                        
+                        $("#request-process-patent").html("提交数据失败！");
+                    }
+                });
+            });
+        })
+
+
+       
+
+        function GetJsonData() {
+            //var json = {
+            //    "id": 0,
+            //    "number": "",
+            //    "liner_id": 5,
+            //    "liner_name": "皇家加勒比邮轮公司",
+            //    "user_id": 0,
+            //    "user_name": "",
+            //    "start_date": "2015-12-20",
+            //    "liner_date_id": 10,
+            //    "contactor": "张三",
+            //    "mobile": "13132042892",
+            //    "email": "513346598@qq.com",
+            //    "fee_room": 0,
+            //    "fee_cruise": 0,
+            //    "fee_diyong": 0,
+            //    "fee_card": 0,
+            //    "fee_web_minus": 0,
+            //    "fee_app_minus": -20,
+            //    "fee_real": 0,
+            //    "fee_deposit": 902,
+            //    "fee_change_item": 0,
+            //    "fee_pay_ment": 0,
+            //    "fee_back_value": 0,
+            //    "is_pay": false,
+            //    "get_diyong": 12,
+            //    "status": 1,
+            //    "payment": "现金",
+            //    "add_time": "2015-12-20",
+            //    "order_from": "",
+            //    "retail_id": 0,
+            //    "manager_id": 0,
+            //    "room_num": 0,
+            //    "people_num": 0,
+            //    "trade_no": "",
+            //    "order_text": "备注",
+            //    "admin_order_text": "",
+            //    "cancel_text": "",
+            //    "team_no": "",
+            //    "invoice_title": "",
+            //    "invoice_text": "",
+            //    "visitors": [
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 0,
+            //            "name": "test1",
+            //            "card_type": "身份证",
+            //            "card_no": "120105198106113312",
+            //            "room_type_id": 1,
+            //            "mobile":"13132042899",
+            //            "birthday": "1981-06-11",
+            //            "crowd_name": "成人",
+            //            "sex": "男",
+            //            "sell_price": 102,
+            //            "price": 101
+            //        },
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 0,
+            //            "name": "test1",
+            //            "card_type": "身份证",
+            //            "card_no": "120105198106113312",
+            //            "room_type_id": 1,
+            //            "mobile": "13132042899",
+            //            "birthday": "1981-06-11",
+            //            "crowd_name": "成人",
+            //            "sex": "男",
+            //            "sell_price": 101,
+            //            "price": 201
+            //        }
+            //    ],
+            //    "rooms": [
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 0,
+            //            "room_type_id": 1,
+            //            "room_num": 1,
+            //            "people_num": 0
+            //        }
+            //    ],
+            //    "change_item": [],
+            //    "cruise": [
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 0,
+            //            "cruise_item_name": "岸上巡游1 ",
+            //            "adult_num": 2,
+            //            "child_num": 2,
+            //            "adult_sell_price": 200,
+            //            "adult_price": 100,
+            //            "child_sell_price": 80,
+            //            "child_price": 50,
+            //            "total_sell_price": 400,
+            //            "total_price": 200
+            //        },
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 1,
+            //            "cruise_item_name": "岸上巡游2 ",
+            //            "adult_num": 2,
+            //            "child_num": 3,
+            //            "adult_sell_price": 200,
+            //            "adult_price": 150,
+            //            "child_sell_price": 90,
+            //            "child_price": 60,
+            //            "total_sell_price": 400,
+            //            "total_price": 300
+            //        }
+            //    ],
+            //    "cards": [
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 0,
+            //            "card_no": "123456",
+            //            "card_type_id": 1,
+            //            "card_batch_id": 2,
+            //            "card_value": 10
+            //        },
+            //        {
+            //            "id": 0,
+            //            "liner_order_id": 0,
+            //            "card_no": "654321",
+            //            "card_type_id": 2,
+            //            "card_batch_id": 3,
+            //            "card_value": 20
+            //        }
+            //    ],
+            //    "diyongs": [
+            //        {
+            //            "id": 0,
+            //            "diyong": 10,
+            //            "liner_order_id": 1,
+            //            "user_id": 0
+            //        },
+            //        {
+            //            "id": 0,
+            //            "diyong": 10,
+            //            "liner_order_id": 1,
+            //            "user_id": 0
+            //        }
+            //    ],
+            //    "attachments": [
+            //        {
+            //            "id": 0,
+            //            "attachment_id": 1,
+            //            "amount": 2,
+            //            "liner_order_id": 0
+            //        },
+            //        {
+            //            "id": 0,
+            //            "attachment_id": 2,
+            //            "amount": 2,
+            //            "liner_order_id": 0
+            //        }
+            //    ]
+            //}
+            var json = {
+                "id": 0,
+                "number": "",
+                "liner_id": 1,
+                "liner_name": "歌诗达大西洋号日韩六日",
+                "user_id": "67",
+                "user_name": "",
+                "start_date": "2016-02-15",
+                "liner_date_id": 10,
+                "contactor": "大美女",
+                "mobile": "15822862376",
+                "email": "349096005@qq.com",
+                "fee_room": 1,
+                "fee_cruise": "2",
+                "fee_diyong": 0,
+                "fee_card": "0",
+                "fee_web_minus": 0,
+                "fee_app_minus": -20,
+                "fee_real": 0,
+                "fee_deposit": 902,
+                "fee_change_item": 0,
+                "fee_pay_ment": 0,
+                "fee_back_value": 0,
+                "is_pay": false,
+                "get_diyong": 12,
+                "status": 1,
+                "payment": "现金",
+                "add_time": "2016-02-02",
+                "order_from": "",
+                "retail_id": 0,
+                "manager_id": 0,
+                "room_num": 0,
+                "people_num": 0,
+                "trade_no": "",
+                "order_text": "备注",
+                "admin_order_text": "",
+                "cancel_text": "",
+                "team_no": "",
+                "invoice_title": "",
+                "invoice_text": "",
+                "visitors111": 
+                    {
+                        "id": 0,
+                        "liner_order_id": 0,
+                        "name": "王雷",
+                        "card_type": "身份证",
+                        "card_no": "410527198710057117",
+                        "room_type_id": 0,
+                        "mobile": "18522583308",
+                        "birthday": "1987-10-05",
+                        "crowd_name": "成人",
+                        "sex": "男",
+                        "sell_price": 0,
+                        "price": 0
+                    }
+                ,
+                "visitors": [
+                    {
+                        "id": 0,
+                        "liner_order_id": 0,
+                        "name": "王雷",
+                        "card_type": "身份证",
+                        "card_no": "410527198710057117",
+                        "room_type_id": 0,
+                        "mobile": "18522583308",
+                        "birthday": "1987-10-05",
+                        "crowd_name": "成人",
+                        "sex": "男",
+                        "sell_price": 0,
+                        "price": 0
+                    }
+                ],
+                "rooms": [
+                    {
+                        "id": "2",
+                        "liner_order_id": 0,
+                        "room_type_id": "1",
+                        "room_num": "1",
+                        "people_num": "1"
+                    }
+                ],
+                "change_item": [],
+                "cruise": [],
+                "cards": [],
+                "diyongs": [],
+                "attachments": []
+            };
+            return json;
+        }
+
+
+    </script>
+</head>
+<body>
+   <input type="button" value="submit"  id="btnSend"/>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>FeatureLayer using Weighted HeatmapRenderer</title>
+    <link rel="stylesheet" href="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/esri/css/esri.css">
+    <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+    <script src="http://127.0.0.1:9016/arcgis_js_api/library/3.20/3.20/init.js"></script>
+
+    <script>
+        require([
+    "esri/basemaps",
+    "esri/map",
+    "esri/urlUtils",
+    "esri/geometry/Point", 
+    "esri/SpatialReference",
+    "esri/symbols/PictureMarkerSymbol",
+    "esri/graphic",
+    "dojo/on",
+    "dojo/dom",
+    "dojo/domReady!"
+  ], function (esriBasemaps, Map,urlUtils,Point,SpatialReference,PictureMarkerSymbol,Graphic,on,dom){
+        	urlUtils.addProxyRule({
+               	urlPrefix: "http://127.0.0.1:6080/arcgis/rest/services/",
+               	proxyUrl: "proxy.jsp"
+          	  });
+
+    var map = new Map("map", {
+      //basemap: "gray",
+      center: [113,37], // long, lat
+    });
+    var myTiledMapServiceLayer = new esri.layers.ArcGISDynamicMapServiceLayer("http://127.0.0.1:6080/arcgis/rest/services/SampleWorldCities/MapServer");  
+    map.addLayer(myTiledMapServiceLayer);
+    //创建点
+    var point=new Point(117.13,39.6, new SpatialReference({ wkid: 4326 }));
+    //点的符号
+    var picBaseUrl = "https://static.arcgis.com/images/Symbols/Shapes/";
+    var blue = new PictureMarkerSymbol(picBaseUrl + "BluePin1LargeB.png", 32, 32).setOffset(0, 15);
+    //添加到地图
+    var graphic=new Graphic(point,blue);
+    on(dom.byId("cli"),"click",function(){
+        map.graphics.add(graphic);
+    })
+    
+});
+
+    </script>
+</head>
+<body>
+<div id="map">
+    <button id="cli"> click me </button>
+</div>
+</body>
+</html>
