@@ -264,9 +264,16 @@ public class TransProvincialController extends BaseController
 			str =  getPara("jsonParam").toString() ;
 		}
 		String apiName = "getXkz";
-		String res = getMessage(str,apiName);
+		String res = "";
+		if(getPara("version") != null && "2".equals(getPara("version"))){
+			res = getMessageSimple(str,apiName);
+			getResponse().setHeader("Access-Control-Allow-Origin", "*");
+		}else{
+			res = getMessage(str,apiName);
+		}
 		renderJson(res);
 	}
+	
 	/**
 	 * @date 2017-8-16
 	 * @查询许可证正式方法
@@ -737,6 +744,28 @@ public class TransProvincialController extends BaseController
 		} 
 		return res;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private String getMessageSimple(String json,String apiName)
+	{
+		String res = "";
+		try {
+			System.out.println("sendMessage json before=========>"+json);
+			JSONObject jsonObject=JSONObject.fromObject(json);  
+			Collection<Object> arra  = jsonObject.values();
+			Object[] objs = arra.toArray();
+			Client client = new Client(new URL(url));
+			Object[] resObj = client.invoke(apiName,objs);
+			res = resObj[0].toString();
+			System.out.println("return json=========>"+resObj[0].toString());
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return res;
+	}
+	
 	public static void main(String args[])
 	{
 		

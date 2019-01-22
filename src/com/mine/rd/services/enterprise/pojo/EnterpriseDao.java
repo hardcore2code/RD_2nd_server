@@ -1399,7 +1399,7 @@ public class EnterpriseDao extends BaseDao {
 	 */
 	public String savePersonCode(String epId, String personId, String tablename, String contents, String personName){
 		String path = JFinal.me().getServletContext().getRealPath("/");
-		String pathSave = "\\upload\\personCode\\" + epId + "_" + DateKit.toStr(new Date(), "yyyyMMddHHmmss")+".jpg";
+		String pathSave = "/upload/personCode/" + epId + "_" + DateKit.toStr(new Date(), "yyyyMMddHHmmss")+".jpg";
 		path = path + pathSave;
 		QRcodeKit.encodePR(contents, 170, 170, path);
 		if(Db.update("update "+tablename+" set CODE_PATH = ? where PI_ID = ? and EP_ID = ? and NAME = ?", pathSave, personId, epId, personName) > 0){
@@ -1463,7 +1463,7 @@ public class EnterpriseDao extends BaseDao {
 	 */
 	public String saveCarCode(String epId, String carId, String contents, String plateNumber){
 		String path = JFinal.me().getServletContext().getRealPath("/");
-		String pathSave = "\\upload\\carCode\\" + epId + "_" + DateKit.toStr(new Date(), "yyyyMMddHHmmss")+".jpg";
+		String pathSave = "/upload/carCode/" + epId + "_" + DateKit.toStr(new Date(), "yyyyMMddHHmmss")+".jpg";
 		path = path + pathSave;
 		QRcodeKit.encodePR(contents, 170, 170, path);
 		if(Db.update("update WOBO_CAR set CODE_PATH = ? where CI_ID = ? and EP_ID = ? and PLATE_NUMBER = ?", pathSave, carId, epId, plateNumber) > 0){

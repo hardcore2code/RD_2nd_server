@@ -473,6 +473,7 @@ public class TransferService extends BaseService {
 	        			queryBoxSuttle();
 	        		}
 	            } catch (IllegalBlockSizeException e) {
+	            	e.printStackTrace();
 	                controller.setAttr("msg", "二维码信息不正确，请重新生成二维码！");
 	    			controller.setAttr("resFlag", "1");
 	                return false;
