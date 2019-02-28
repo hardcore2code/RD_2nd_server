@@ -317,6 +317,9 @@ public class TransferService extends BaseService {
 		if(controller.getMyParamMap("haul") != null && controller.getMyParam("weight") != null){
 			Map<String, Object> haul = controller.getMyParamMap("haul");
 			weight = controller.getMyParam("weight").toString();
+			Map<String, Object> carinfo = dao.getCarInfo(haul.get("CI_ID"), haul.get("PLATE_NUMBER"), null, haul.get("TG_ID"));
+			float box_weight = dao.getBoxWeight(haul.get("TG_ID"));
+			weight = (Float.parseFloat(weight) - Float.parseFloat(carinfo.get("TARE").toString())-box_weight)+"";
 			boolean flag = dao.saveWeight(haul.get("TG_ID").toString(), weight);
 			//保存成功重量
 			if(flag){
