@@ -64,6 +64,26 @@ public abstract class BaseDao
 		}
 		return record.getStr("ID") + DateKit.getTimestamp(getSysdate()) + seq;
 	}
+	
+	public String getId(String tablename)
+	{
+		Record record = Db.findFirst("select * from Z_PUB_SEQ where TABLENAME=?", tablename);
+		String seq = "";
+		if(record.getInt("NUM") == record.getInt("MAXNUM"))
+		{
+			seq = "1";
+		}else
+		{
+			int addres = record.getInt("NUM") + record.getInt("ADDNUM");
+			seq = addres + "";
+		}
+		Db.update("update Z_PUB_SEQ set num = ? where TABLENAME = ?", Integer.parseInt(seq) , tablename);
+		while(seq.length()<8)
+		{
+			seq = "0"+seq;
+		}
+		return "1201"+seq;
+	}
 
 	/**
 	 * @author woody
