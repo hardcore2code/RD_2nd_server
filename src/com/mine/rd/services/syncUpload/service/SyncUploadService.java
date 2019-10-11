@@ -72,6 +72,9 @@ public class SyncUploadService  extends BaseService{
 	            	else if("bjZyld".equals(getLastMethodName(7))){
 	            		saveKsldJy();
 	            	}
+	            	else if("indexbywotimer".equals(getLastMethodName(7))){
+	            		indexbywotimer();
+	            	}
 	            } catch (Exception e) {
 	            	logger.error("services错误信息===>" + e.getMessage());
 	                e.printStackTrace();
@@ -487,6 +490,28 @@ public class SyncUploadService  extends BaseService{
 			controller.renderJson("3");
 //			controller.setAttr("result","jsonParam为空");
 		}	
+	}
+	
+	private void indexbywotimer() throws Exception{
+		String str =  "{}" ;
+		String method = "";
+		String wsdl = "";
+		if(controller.getPara("jsonParam") != null && !"".equals(controller.getPara("jsonParam"))){
+			str =  controller.getPara("jsonParam").toString() ;
+		}
+		if(controller.getPara("method") != null && !"".equals(controller.getPara("method"))){
+			method =  controller.getPara("method").toString() ;
+		}
+		if(controller.getPara("url") != null && !"".equals(controller.getPara("url"))){
+			wsdl =  controller.getPara("url").toString() ;
+		}
+		System.out.println(str);
+		System.out.println(method);
+		System.out.println(wsdl);
+		Object[] result = this.myClient(str, method,wsdl);
+		String res = result[0].toString();
+		System.out.println(method+"=>返回码：" + res);
+		controller.renderJson(res);
 	}
 	
 	private String myDecoder(String json) throws Exception{

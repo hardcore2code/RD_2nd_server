@@ -15,7 +15,20 @@ import com.mine.rd.services.syncUpload.service.SyncUploadService;
 public class SyncUploadController extends BaseController{
 	private Logger logger = Logger.getLogger(SyncUploadController.class);
 	public void index(){
-		renderJson("aaa");
+		renderJson("sync upload start");
+	}
+	
+	public void indexbywotimer()
+	{
+		logger.info("来自wotimer的请求");
+		Service service = new SyncUploadService(this);
+		try {
+			service.doService();
+		} catch (Exception e) {
+			logger.error("来自wotimer的请求异常===>" + e.getMessage());
+			logger.error("来自wotimer的请求异常getLocalizedMessage===>" + e.getLocalizedMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	/**
