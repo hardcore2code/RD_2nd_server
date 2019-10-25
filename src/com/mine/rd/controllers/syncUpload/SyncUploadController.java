@@ -31,6 +31,18 @@ public class SyncUploadController extends BaseController{
 		}
 	}
 	
+	public void indexForCors(){
+		logger.info("同步部里数据的跨域接口");
+		Service service = new SyncUploadService(this);
+		try {
+			service.doService();
+		} catch (Exception e) {
+			logger.error("同步部里数据的跨域接口异常===>" + e.getMessage());
+			logger.error("同步部里数据的跨域接口异常getLocalizedMessage===>" + e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * @author woody
 	 * @date 20190417
@@ -271,5 +283,47 @@ public class SyncUploadController extends BaseController{
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void queryPlanByEpName(){
+		logger.info("根据企业名称查询管理计划");
+		Service service = new SyncUploadService(this);
+		try {
+			service.doService();
+		} catch (Exception e) {
+			logger.error("根据企业名称查询管理计划异常===>" + e.getMessage());
+			this.setAttr("msg", "系统异常！");
+			this.setAttr("resFlag", "1");
+			e.printStackTrace();
+		}
+		renderJsonForCors();
+	}
+	
+	public void applySyncPlan(){
+		logger.info("跨省管理计划审批和回复");
+		Service service = new SyncUploadService(this);
+		try {
+			service.doService();
+		} catch (Exception e) {
+			logger.error("跨省管理计划审批和回复异常===>" + e.getMessage());
+			this.setAttr("msg", "系统异常！");
+			this.setAttr("resFlag", "1");
+			e.printStackTrace();
+		}
+		renderJsonForCorsSimple();
+	}
+	
+	public void queryPlanById(){
+		logger.info("根据企业名称查询管理计划");
+		Service service = new SyncUploadService(this);
+		try {
+			service.doService();
+		} catch (Exception e) {
+			logger.error("根据企业名称查询管理计划异常===>" + e.getMessage());
+			this.setAttr("msg", "系统异常！");
+			this.setAttr("resFlag", "1");
+			e.printStackTrace();
+		}
+		renderJsonForCors();
+	}
+	
 }

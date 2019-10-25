@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.mine.pub.kit.DateKit;
 import com.mine.pub.pojo.BaseDao;
 
 public class SyncUploadDao extends BaseDao {
@@ -87,5 +88,52 @@ public class SyncUploadDao extends BaseDao {
 		record.set("result", result);
 		record.set("sysdate", getSysdate());
 		Db.save("Z_SYNC_UPLOAD_FLOW", record);
+	}
+	
+	public List<Map<String,Object>> queryPlanByEpName(){
+//		List<Record> records = Db.find("select * from Z_WOBO_PLAN_MAIN where ep_name like '%"+epName+"%' ");
+		List<Record> records = Db.find("select a.* from Z_WOBO_PLAN_MAIN a,Z_WOBO_TRANSFER_PLAN_PT b where a.tp_id = b.tp_id and a.status = '05' ");
+		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+		for(int i = 0; i<records.size() ; i++){
+			records.get(i).set("PLAN_YEAR", DateKit.toStr(records.get(i).getDate("BEGINDATE"), "yyyy"));
+			list.add(records.get(i).getColumns());
+		}
+		return list;
+	}
+	
+	public Map<String,Object> queryPlanById(String id){
+		Record record = Db.findFirst("select * from Z_SYNC_UPLOAD_FLOW_PT where ID= ?  ",id);
+		return record == null ? null : record.getColumns();
+	}
+	
+	public void saveSYNCUPLOADFLOWPT(String tpId,String epId,String id,String method){
+		Db.update("delete from Z_SYNC_UPLOAD_FLOW_PT where TP_ID = ? and id = ? and method =? ",tpId,id,method);
+		Record record = new Record();
+		record.set("TP_ID", tpId);
+		record.set("ID", id);
+		record.set("method", method);
+		record.set("result", id);
+		record.set("sysdate", getSysdate());
+		record.set("EP_ID", epId);
+		Db.save("Z_SYNC_UPLOAD_FLOW_PT", record);
+	}
+	
+	public void saveSYNCUPLOADFLOWPT(String res,String id,String method){
+		Record old = Db.findFirst("select * from Z_SYNC_UPLOAD_FLOW_PT where method = 'saveKsldSq' and id = ? ",id);
+		String tpId = "";
+		String epId = "";
+		if(old != null && old.get("TP_ID") != null){
+			tpId = old.get("TP_ID").toString();
+			epId = old.get("EP_ID").toString();
+		}
+		Db.update("delete from Z_SYNC_UPLOAD_FLOW_PT where id = ? and method =? ",id,method);
+		Record record = new Record();
+		record.set("TP_ID", tpId);
+		record.set("ID", id);
+		record.set("method", method);
+		record.set("result", res);
+		record.set("sysdate", getSysdate());
+		record.set("EP_ID", epId);
+		Db.save("Z_SYNC_UPLOAD_FLOW_PT", record);
 	}
 }

@@ -2,6 +2,8 @@ package com.mine.rd.services.syncUpload.service;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +76,18 @@ public class SyncUploadService  extends BaseService{
 	            	}
 	            	else if("indexbywotimer".equals(getLastMethodName(7))){
 	            		indexbywotimer();
+	            	}
+	            	else if("indexForCors".equals(getLastMethodName(7))){
+	            		indexForCors();
+	            	}
+	            	else if("queryPlanByEpName".equals(getLastMethodName(7))){
+	            		queryPlanByEpName();
+	            	}
+	            	else if("applySyncPlan".equals(getLastMethodName(7))){
+	            		applySyncPlan();
+	            	}
+	            	else if("queryPlanById".equals(getLastMethodName(7))){
+	            		queryPlanById();
 	            	}
 	            } catch (Exception e) {
 	            	logger.error("services错误信息===>" + e.getMessage());
@@ -514,6 +528,68 @@ public class SyncUploadService  extends BaseService{
 		controller.renderJson(res);
 	}
 	
+	private void indexForCors() throws Exception{
+		String str =  "{}" ;
+		String method = "";
+		String wsdl = "";
+		String TP_ID = "";
+		String EP_ID = "";
+		if(controller.getMyParam("jsonParam") != null && !"".equals(controller.getMyParam("jsonParam"))){
+			str =  controller.getMyParam("jsonParam").toString() ;
+		}
+		if(controller.getMyParam("method") != null && !"".equals(controller.getMyParam("method"))){
+			method =  controller.getMyParam("method").toString() ;
+		}
+		if(controller.getMyParam("url") != null && !"".equals(controller.getMyParam("url"))){
+			wsdl =  controller.getMyParam("url").toString() ;
+		}
+		System.out.println(str);
+		System.out.println(method);
+		System.out.println(wsdl);
+		Object[] result = this.myClient(str, method,wsdl);
+		String res = result[0].toString();
+		System.out.println(method+"=>返回码：" + res);
+		if(method.equals("saveKsldSq") || method.equals("saveKsldSqHf") || method.equals("saveKsldSqSp")){
+			if(controller.getMyParam("TP_ID") != null && !"".equals(controller.getMyParam("TP_ID"))){
+				TP_ID =  controller.getMyParam("TP_ID").toString() ;
+			}
+			if(controller.getMyParam("EP_ID") != null && !"".equals(controller.getMyParam("EP_ID"))){
+				EP_ID =  controller.getMyParam("EP_ID").toString() ;
+			}
+			dao.saveSYNCUPLOADFLOWPT(TP_ID, EP_ID, res, method);
+		}
+		controller.renderJsonForCorsSimple(res);
+	}
+	
+	private void applySyncPlan() throws Exception{
+		String str =  "{}" ;
+		String method = "";
+		String wsdl = "";
+		if(controller.getMyParam("jsonParam") != null && !"".equals(controller.getMyParam("jsonParam"))){
+			str =  controller.getMyParam("jsonParam").toString() ;
+		}
+		if(controller.getMyParam("method") != null && !"".equals(controller.getMyParam("method"))){
+			method =  controller.getMyParam("method").toString() ;
+		}
+		if(controller.getMyParam("url") != null && !"".equals(controller.getMyParam("url"))){
+			wsdl =  controller.getMyParam("url").toString() ;
+		}
+		System.out.println(str);
+		System.out.println(method);
+		System.out.println(wsdl);
+		Object[] result = this.myClient(str, method,wsdl);
+		String res = result[0].toString();
+		System.out.println(method+"=>返回码：" + res);
+		if(controller.getMyParam("zysqclid") != null && !"".equals(controller.getMyParam("zysqclid"))){
+			dao.saveSYNCUPLOADFLOWPT(res,controller.getMyParam("zysqclid").toString(),method);
+		}
+		if(res.length()>5){
+			controller.setAttr("msg", "成功");
+		}else{
+			controller.setAttr("msg", "失败,错误码:"+res);
+		}
+	}
+	
 	private String myDecoder(String json) throws Exception{
 //		System.out.println("sendMessage json before=========>"+json);
 		sun.misc.BASE64Decoder decoder = new sun.misc.BASE64Decoder();
@@ -529,5 +605,85 @@ public class SyncUploadService  extends BaseService{
 		Client client = new Client(new URL(purl));
 		Object[] result = client.invoke(methodName, new Object[] {key, encSNStr }); 
 		return result;
+	}
+	
+	private void queryPlanByEpName(){
+//		String epName = controller.getMyParam("epName").toString();
+		List<Map<String,Object>> planList = dao.queryPlanByEpName();
+		controller.setAttr("planList", planList == null ? "" : planList);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void queryPlanById() throws Exception{
+		String str =  "{}" ;
+		String method = "";
+		String wsdl = "";
+		if(controller.getMyParam("jsonParam") != null && !"".equals(controller.getMyParam("jsonParam"))){
+			str =  controller.getMyParam("jsonParam").toString() ;
+		}
+		if(controller.getMyParam("method") != null && !"".equals(controller.getMyParam("method"))){
+			method =  controller.getMyParam("method").toString() ;
+		}
+		if(controller.getMyParam("url") != null && !"".equals(controller.getMyParam("url"))){
+			wsdl =  controller.getMyParam("url").toString() ;
+		}
+		System.out.println(str);
+		System.out.println(method);
+		System.out.println(wsdl);
+		Object[] result = this.myClient(str, method,wsdl);
+		String res = result[0].toString();
+		net.sf.json.JSONObject resJson=net.sf.json.JSONObject.fromObject(res.subSequence(1, res.length()-1));
+		Map<String,Object> initPtInfo = new HashMap<String, Object>();
+		Map<String,Object> initPt = new HashMap<String, Object>();
+		initPt.put("zysqclid", resJson.get("zysqclid"));
+		initPt.put("EN_ID_CS", "");
+		initPt.put("TP_ID", "");
+		initPt.put("LINKMAN", resJson.get("wfjsdwlxr"));
+		initPt.put("LINKPHONE", resJson.get("wfjsdwlxrsj"));
+		initPt.put("wfjsdwlxr", resJson.get("wfjsdwlxr"));
+		initPt.put("wfjsdwlxrsj", resJson.get("wfjsdwlxrsj"));
+		initPt.put("wfjsdwmc",  resJson.get("wfjsdwmc"));
+		initPt.put("wfjsdz",  resJson.get("wfjsdz"));
+		initPt.put("fwjsdwwxfwjyxkzh", resJson.get("jsdwxkzbh"));
+		initPt.put("fwycdwlxrsj", resJson.get("fwycdwlxrsj"));
+		initPt.put("jhqrsxzqh", "");
+		initPt.put("jsrq",  resJson.get("jsrq"));
+		initPt.put("ksrq",  resJson.get("ksrq"));
+		initPt.put("sqrq", resJson.get("resJson"));
+		
+		
+		initPt.put("wfycdwbm", "");
+		initPt.put("wfycdwdz", "");
+		initPt.put("wfycdwlxr", "");
+		initPt.put("wfycdwmc", "");
+		initPt.put("ycsxzqhdm", "");
+		initPt.put("yrsxzqhdm", "");
+		initPt.put("ysdwdlyszh", "");
+		initPt.put("ysdwdz", "");
+		initPt.put("ysdwlxr", "");
+		initPt.put("ysdwlxrsj", "");
+		initPt.put("ysdwmc", "");
+		initPtInfo.put("initPt", initPt);
+		List<Map<String,Object>> initPtList = new ArrayList<Map<String,Object>>();
+		List<Map<String,Object>> fwsz = (List<Map<String, Object>>) resJson.get("fwsz");
+		Map<String,Object> fwsz_one = new HashMap<String, Object>();
+		for(Map<String,Object> one : fwsz){
+			fwsz_one.clear();
+			fwsz_one.put("BIG_CATEGORY_ID", "HW"+one.get("fwlb"));
+			fwsz_one.put("BIG_CATEGORY_NAME", "");
+			fwsz_one.put("D_NAME", one.get("fwmc"));
+			fwsz_one.put("UNIT_NUM", one.get("zysl"));
+			fwsz_one.put("UNIT", one.get("jldw"));
+			fwsz_one.put("SAMLL_CATEGORY_ID", one.get("fwdm"));
+			fwsz_one.put("wxfwmc", one.get("fwmc"));
+			fwsz_one.put("zysl", one.get("zysl"));
+			fwsz_one.put("jldw", one.get("jldw"));
+			fwsz_one.put("wxfwdm", one.get("fwdm"));
+			initPtList.add(fwsz_one);
+		}
+		initPtInfo.put("initPtList", initPtList);
+		List<Map<String,Object>> initPtInfoList = new ArrayList<Map<String,Object>>();
+		initPtInfoList.add(initPtInfo);
+		controller.setAttr("initPtInfoList", initPtInfoList);
 	}
 }

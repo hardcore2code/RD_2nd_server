@@ -41,6 +41,10 @@ public class BaseController extends Controller
 		getResponse().setHeader("Access-Control-Allow-Origin", "*");
 		this.renderJson(str);
 	}
+	public void renderJsonForCorsSimple(String str) {
+		getResponse().setHeader("Access-Control-Allow-Origin", "*");
+		this.renderJson(str);
+	}
 	/**
 	 * @author woody
 	 * @date 20151001
@@ -60,6 +64,10 @@ public class BaseController extends Controller
 	public void renderJsonForCors() {
 		this.doIWBSESSION();
 		this.doUserBaseInfo();
+		getResponse().setHeader("Access-Control-Allow-Origin", "*");
+		this.renderJson();
+	}
+	public void renderJsonForCorsSimple() {
 		getResponse().setHeader("Access-Control-Allow-Origin", "*");
 		this.renderJson();
 	}
