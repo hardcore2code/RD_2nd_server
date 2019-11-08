@@ -92,7 +92,7 @@ public class SyncUploadDao extends BaseDao {
 	
 	public List<Map<String,Object>> queryPlanByEpName(){
 //		List<Record> records = Db.find("select * from Z_WOBO_PLAN_MAIN where ep_name like '%"+epName+"%' ");
-		List<Record> records = Db.find("select a.* from Z_WOBO_PLAN_MAIN a,Z_WOBO_TRANSFER_PLAN_PT b where a.tp_id = b.tp_id and a.status = '05' ");
+		List<Record> records = Db.find("select distinct a.* from Z_WOBO_PLAN_MAIN a,Z_WOBO_TRANSFER_PLAN_PT b where a.tp_id = b.tp_id and a.status = '05' ");
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		for(int i = 0; i<records.size() ; i++){
 			records.get(i).set("PLAN_YEAR", DateKit.toStr(records.get(i).getDate("BEGINDATE"), "yyyy"));
