@@ -257,4 +257,21 @@ private Logger logger = Logger.getLogger(TransferController.class);
 		renderJsonForCors();
 	}
 	
+	/**
+	 * @author woody
+	 * @date 20200310
+	 * 方法：处理只输重量运单的状态
+	 */
+	public void doneForWeight(){
+		logger.info("处理只输重量运单的状态");
+		Service service = new TransferService(this);
+		try {
+			service.doService();
+		} catch (Exception e) {
+			logger.error("处理只输重量运单的状态异常===>" + e.getMessage());
+			e.printStackTrace();
+		}
+		renderJsonForCors();
+	}
+	
 }

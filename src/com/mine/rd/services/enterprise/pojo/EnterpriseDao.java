@@ -55,6 +55,7 @@ public class EnterpriseDao extends BaseDao {
 			epInfo.put("latitude", enterprise.get("LATITUDE"));
 			epInfo.put("step", enterprise.get("STEP"));
 			epInfo.put("orgType", enterprise.get("ORGTYPE"));
+			epInfo.put("berthNum", enterprise.get("berthNum"));
 			Record epRelation = Db.findFirst("select * from WOBO_EPRELATION where EP_SON_ID = ? and STATUS = '1'", enterprise.get("EP_ID"));
 			String belongOrgSepa = "";
 			if(epRelation != null){
@@ -220,6 +221,7 @@ public class EnterpriseDao extends BaseDao {
 			epInfo.put("latitude", enterprise.get("LATITUDE"));
 			epInfo.put("step", enterprise.get("STEP"));
 			epInfo.put("orgType", enterprise.get("ORGTYPE"));
+			epInfo.put("berthNum", enterprise.get("berthNum"));
 			Record epRelation = Db.findFirst("select * from WOBO_EPRELATION"+addname+" where EP_SON_ID = ? and STATUS = '1'", enterprise.get("EP_ID"));
 			String belongOrgSepa = "";
 			if(epRelation != null){
@@ -399,6 +401,7 @@ public class EnterpriseDao extends BaseDao {
 			epInfo.put("latitude", enterprise.get("LATITUDE"));
 			epInfo.put("step", enterprise.get("STEP"));
 			epInfo.put("orgType", enterprise.get("ORGTYPE"));
+			epInfo.put("berthNum", enterprise.get("berthNum"));
 			String sql1 = "select * from WOBO_EPRELATION_UPDATE where EP_SON_ID = ? and STATUS = '1' and BIZ_ID = ?";
 			if("_UPDATE_H".equals(addname)){
 				sql1 = "select * from WOBO_EPRELATION"+addname+" where EP_SON_ID = ? and STATUS = '1' and BIZ_ID = ?";
@@ -669,8 +672,8 @@ public class EnterpriseDao extends BaseDao {
 	 */
 	public boolean updateEnterpriseInfo(Map<String, Object> epInfo, String epId){
 		String orgType = epInfo.get("orgType").toString();
-		String sql = "update WOBO_ENTERPRISE set EP_NAME=?,REGISTERCODE=?,LINKMAN=?,EP_ADRESS_Q=?,CONTANCTS=?,TEL=?,MOBILEPHONE=?,POSTAL_CODE=?,EMAIL=?,LONGITUDE=?,LATITUDE=?,STEP=?,ORGTYPE=?,EP_ADRESS_S=?,EP_ADRESS_J=?,BELONGSEPA=? where EP_ID = ?";
-		int result = Db.update(sql, epInfo.get("epName"),epInfo.get("epCode"),epInfo.get("linkMan"),epInfo.get("belongArea"),epInfo.get("contancts"),epInfo.get("tel"),epInfo.get("mobilephone"),epInfo.get("postalCode"),epInfo.get("eMail"),epInfo.get("longitude"),epInfo.get("latitude"),epInfo.get("step"),orgType,epInfo.get("belongCity"),epInfo.get("belongStreet"),epInfo.get("belongSepa"),epId);
+		String sql = "update WOBO_ENTERPRISE set EP_NAME=?,REGISTERCODE=?,LINKMAN=?,EP_ADRESS_Q=?,CONTANCTS=?,TEL=?,MOBILEPHONE=?,POSTAL_CODE=?,EMAIL=?,LONGITUDE=?,LATITUDE=?,STEP=?,ORGTYPE=?,EP_ADRESS_S=?,EP_ADRESS_J=?,BELONGSEPA=?,berthNum=? where EP_ID = ?";
+		int result = Db.update(sql, epInfo.get("epName"),epInfo.get("epCode"),epInfo.get("linkMan"),epInfo.get("belongArea"),epInfo.get("contancts"),epInfo.get("tel"),epInfo.get("mobilephone"),epInfo.get("postalCode"),epInfo.get("eMail"),epInfo.get("longitude"),epInfo.get("latitude"),epInfo.get("step"),orgType,epInfo.get("belongCity"),epInfo.get("belongStreet"),epInfo.get("belongSepa"),epInfo.get("berthNum"),epId);
 		if(result > 0){
 			if(epInfo.get("belongOrg") != null && !"".equals(epInfo.get("belongOrg")) && !"0".equals(epInfo.get("belongOrg"))){
 				Record record = Db.findFirst("select * from WOBO_EPRELATION where EP_SON_ID = ? and STATUS = '1'", epId);
@@ -715,8 +718,8 @@ public class EnterpriseDao extends BaseDao {
 			}
 		}
 		String orgType = epInfo.get("orgType").toString();
-		String sql = "update WOBO_ENTERPRISE_UPDATE set EP_NAME=?,REGISTERCODE=?,LINKMAN=?,EP_ADRESS_Q=?,CONTANCTS=?,TEL=?,MOBILEPHONE=?,POSTAL_CODE=?,EMAIL=?,LONGITUDE=?,LATITUDE=?,STEP=?,ORGTYPE=?,EP_ADRESS_S=?,EP_ADRESS_J=?,BELONGSEPA=? where EP_ID = ?";
-		int result = Db.update(sql, epInfo.get("epName"),epInfo.get("epCode"),epInfo.get("linkMan"),epInfo.get("belongArea"),epInfo.get("contancts"),epInfo.get("tel"),epInfo.get("mobilephone"),epInfo.get("postalCode"),epInfo.get("eMail"),epInfo.get("longitude"),epInfo.get("latitude"),epInfo.get("step"),orgType,epInfo.get("belongCity"),epInfo.get("belongStreet"),epInfo.get("belongSepa"),epId);
+		String sql = "update WOBO_ENTERPRISE_UPDATE set EP_NAME=?,REGISTERCODE=?,LINKMAN=?,EP_ADRESS_Q=?,CONTANCTS=?,TEL=?,MOBILEPHONE=?,POSTAL_CODE=?,EMAIL=?,LONGITUDE=?,LATITUDE=?,STEP=?,ORGTYPE=?,EP_ADRESS_S=?,EP_ADRESS_J=?,BELONGSEPA=?,berthNum=? where EP_ID = ?";
+		int result = Db.update(sql, epInfo.get("epName"),epInfo.get("epCode"),epInfo.get("linkMan"),epInfo.get("belongArea"),epInfo.get("contancts"),epInfo.get("tel"),epInfo.get("mobilephone"),epInfo.get("postalCode"),epInfo.get("eMail"),epInfo.get("longitude"),epInfo.get("latitude"),epInfo.get("step"),orgType,epInfo.get("belongCity"),epInfo.get("belongStreet"),epInfo.get("belongSepa"),epInfo.get("berthNum"),epId);
 		if(result > 0){
 			if(epInfo.get("belongOrg") != null && !"".equals(epInfo.get("belongOrg")) && !"0".equals(epInfo.get("belongOrg"))){
 				Record record = Db.findFirst("select * from WOBO_EPRELATION_UPDATE where EP_SON_ID = ? and STATUS = '1'", epId);
@@ -755,8 +758,8 @@ public class EnterpriseDao extends BaseDao {
 	 * @return true-可修改 false-不可修改
 	 */
 	public boolean checkIfModifyEpInfo(Map<String, Object> epInfo, String epId){
-		String sql = "select * from WOBO_ENTERPRISE where EP_NAME=? and BELONGSEPA=? and LINKMAN=? and TEL=? and POSTAL_CODE=? and REGISTERCODE=? and LONGITUDE=? and LATITUDE=? and EP_ADRESS_S=? and EP_ADRESS_Q=? and EP_ADRESS_J=? and EMAIL=? and STEP=? and ORGTYPE=? and STATUS = '1'";
-		Record ep = Db.findFirst(sql, epInfo.get("epName"),epInfo.get("belongSepa"),epInfo.get("linkMan"),epInfo.get("tel"),epInfo.get("postalCode"),epInfo.get("epCode"),epInfo.get("longitude"),epInfo.get("latitude"),epInfo.get("belongCity"),epInfo.get("belongArea"),epInfo.get("belongStreet"),epInfo.get("eMail"),epInfo.get("step"),epInfo.get("orgType"));
+		String sql = "select * from WOBO_ENTERPRISE where EP_NAME=? and BELONGSEPA=? and LINKMAN=? and TEL=? and POSTAL_CODE=? and REGISTERCODE=? and LONGITUDE=? and LATITUDE=? and EP_ADRESS_S=? and EP_ADRESS_Q=? and EP_ADRESS_J=? and EMAIL=? and STEP=? and ORGTYPE=? and berthNum = ? and STATUS = '1'";
+		Record ep = Db.findFirst(sql, epInfo.get("epName"),epInfo.get("belongSepa"),epInfo.get("linkMan"),epInfo.get("tel"),epInfo.get("postalCode"),epInfo.get("epCode"),epInfo.get("longitude"),epInfo.get("latitude"),epInfo.get("belongCity"),epInfo.get("belongArea"),epInfo.get("belongStreet"),epInfo.get("eMail"),epInfo.get("step"),epInfo.get("orgType"),epInfo.get("berthNum"));
 		if(ep != null){
 			if(epInfo.get("belongOrg") != null && !"".equals(epInfo.get("belongOrg")) && !"0".equals(epInfo.get("belongOrg"))){
 				Record record = Db.findFirst("select * from WOBO_EPRELATION where EP_SON_ID = ? and STATUS = '1' and EP_MAIN_ID = ?", epId, epInfo.get("belongOrg"));

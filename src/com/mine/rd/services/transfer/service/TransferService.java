@@ -438,7 +438,26 @@ public class TransferService extends BaseService {
 		controller.setAttr("BOX_SUTTLE", dao.queryBoxSuttle());
 	}
 	
-	
+	/**
+	 * @author woody
+	 * @date 20200310
+	 * 方法：处理只输重量运单的状态
+	 */
+	private void doneForWeight(){
+		if(controller.getMyParam("TB_ID") != null || "".equals(controller.getMyParam("TB_ID").toString())){
+			boolean flag = dao.doneForWeight(controller.getMyParam("TB_ID").toString());
+			if(flag){
+				controller.setAttr("resFlag", "0");
+				controller.setAttr("msg", "操作成功");
+			}else{
+				controller.setAttr("resFlag", "1");
+				controller.setAttr("msg", "操作失败");
+			}
+		}else{
+			controller.setAttr("resFlag", "1");
+			controller.setAttr("msg", "少传参数");
+		}
+	}
 	
 	@Override
 	public void doService() throws Exception {
@@ -474,6 +493,8 @@ public class TransferService extends BaseService {
 	        			queryHaulListForUser();
 	        		}else if("queryBoxSuttle".equals(getLastMethodName(7))){
 	        			queryBoxSuttle();
+	        		}else if("doneForWeight".equals(getLastMethodName(7))){
+	        			doneForWeight();
 	        		}
 	            } catch (IllegalBlockSizeException e) {
 	            	e.printStackTrace();

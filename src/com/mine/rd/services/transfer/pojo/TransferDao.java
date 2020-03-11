@@ -436,6 +436,7 @@ public class TransferDao extends BaseDao {
 			map.put("CZ_DRIVER_NAME", record.get("CZ_DRIVER_NAME"));
 			map.put("COUNT", record.get("COUNT"));
 			map.put("weight", record.get("UNIT_NUM"));
+			map.put("weightstatus", record.get("WEIGHT_STATUS"));
 			map.put("boxList", queryBoxList(TB_ID));
 		}
 		return map;
@@ -950,6 +951,15 @@ public class TransferDao extends BaseDao {
 			str = boxSuttle.get(0).get("dict_value");
 		}
 		return str;
+	}
+	
+	/**
+	 * @author woody
+	 * @date 20200310
+	 * 方法：处理只输重量运单的状态
+	 */
+	public boolean doneForWeight(String TB_ID){
+ 		return Db.update("update WOBO_TRANSFER_BILL set WEIGHT_STATUS = '1', WEIGHT_DONEDATE = GETDATE()  where TB_ID = ?", TB_ID) > 0;
 	}
 	
 }
