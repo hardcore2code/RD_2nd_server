@@ -15,23 +15,23 @@ public class SyncUploadDao extends BaseDao {
 		StringBuffer sb = new StringBuffer();
 		sb.append("select t.tb_id,t.en_id_cs,t.en_id_ys,t.en_id_cz,t.en_name_cs, ");
 		sb.append("(select '天津市'+n.dictname+sb_adress_j from ENTERPRISE m,EOS_DICT_ENTRY n where m.ep_id = t.en_id_cs and n.dicttypeid='city_q' and m.sb_adress_q = n.dictid) as 'csdz', ");
-		sb.append("case (select n.belong_bh from ENTERPRISE m,B_ORGAN n where m.ep_id = t.en_id_cs and m.BELONG_SEPA = n.bto_id ) ");
-		sb.append("when  1 then '120116' ");
-		sb.append("else (select n.id from ENTERPRISE m,REGION_CODE n where m.ep_id = t.en_id_cs and m.BELONG_SEPA = n.bto_id ) ");
-		sb.append("end as 'regcodecs', ");
+//		sb.append("case (select n.belong_bh from ENTERPRISE m,B_ORGAN n where m.ep_id = t.en_id_cs and m.BELONG_SEPA = n.bto_id ) ");
+//		sb.append("when  1 then '120116' ");
+		sb.append(" (select n.id from ENTERPRISE m,Z_SYNC_REGION_CODE n where m.ep_id = t.en_id_cs and m.BELONG_SEPA = n.bto_id ) ");
+		sb.append(" as 'regcodecs', ");
 		sb.append("case when t.en_id_ys in ('EP2015001','EP2015002','EP2015003') ");
 		sb.append("then (select '天津市'+n.dictname+sb_adress_j from ENTERPRISE m,EOS_DICT_ENTRY n where m.ep_id = t.en_id_cs and n.dicttypeid='city_q' and m.sb_adress_q = n.dictid) ");
 		sb.append("else (select '天津市'+n.dictname+sb_adress_j from ENTERPRISE m,EOS_DICT_ENTRY n where m.ep_id = t.en_id_ys and n.dicttypeid='city_q' and m.sb_adress_q = n.dictid) ");
 		sb.append("end as 'ysdz', ");
-		sb.append("case (select n.belong_bh from ENTERPRISE m,B_ORGAN n where m.ep_id = t.en_id_ys and m.BELONG_SEPA = n.bto_id )  ");
-		sb.append("when 1 then '120116' ");
-		sb.append("else (select n.id from ENTERPRISE m,REGION_CODE n where m.ep_id = t.en_id_ys and m.BELONG_SEPA = n.bto_id ) ");
-		sb.append("end as 'regcodeys', ");
+//		sb.append("case (select n.belong_bh from ENTERPRISE m,B_ORGAN n where m.ep_id = t.en_id_ys and m.BELONG_SEPA = n.bto_id )  ");
+//		sb.append("when 1 then '120116' ");
+		sb.append(" (select n.id from ENTERPRISE m,Z_SYNC_REGION_CODE n where m.ep_id = t.en_id_ys and m.BELONG_SEPA = n.bto_id ) ");
+		sb.append(" as 'regcodeys', ");
 		sb.append("(select '天津市'+n.dictname+sb_adress_j from ENTERPRISE m,EOS_DICT_ENTRY n where m.ep_id = t.en_id_cz and n.dicttypeid='city_q' and m.sb_adress_q = n.dictid) as 'czdz', ");
-		sb.append("case (select n.belong_bh from ENTERPRISE m,B_ORGAN n where m.ep_id = t.en_id_cz and m.BELONG_SEPA = n.bto_id )  ");
-		sb.append("when 1 then '120116' ");
-		sb.append("else (select n.id from ENTERPRISE m,REGION_CODE n where m.ep_id = t.en_id_cz and m.BELONG_SEPA = n.bto_id )  ");
-		sb.append("end as 'regcodecz', ");
+//		sb.append("case (select n.belong_bh from ENTERPRISE m,B_ORGAN n where m.ep_id = t.en_id_cz and m.BELONG_SEPA = n.bto_id )  ");
+//		sb.append("when 1 then '120116' ");
+		sb.append(" (select n.id from ENTERPRISE m,Z_SYNC_REGION_CODE n where m.ep_id = t.en_id_cz and m.BELONG_SEPA = n.bto_id )  ");
+		sb.append(" as 'regcodecz', ");
 		sb.append("(select m.LICENSE_NO from HANDLE_LICENSE m where m.ep_id = t.en_id_cz ) as 'licenseNo', ");
 		sb.append("t.en_name_ys,t.en_name_cz,t.csy,t.ysy,t.czy,CONVERT(varchar(12),t.sysdate, 23) 'mydate',CONVERT(varchar(20),t.actiondate, 20) 'actiondate', ");
 		sb.append("case when t.status = '04' then '拒收' else '接收' end as 'myStatus' , ");
@@ -135,5 +135,30 @@ public class SyncUploadDao extends BaseDao {
 		record.set("sysdate", getSysdate());
 		record.set("EP_ID", epId);
 		Db.save("Z_SYNC_UPLOAD_FLOW_PT", record);
+	}
+	
+	public String getQyid(String epId) {
+		Record one = Db.findFirst("select qyid from Z_SYNC_EP where ep_id = ? ",epId);
+		return one == null ? "" : one.getStr("qyid");
+	}
+	
+	public String getQyidByName(String epname) {
+		Record one = Db.findFirst("select b.qyid from ENTERPRISE a, Z_SYNC_EP b where a.EP_ID = b.EP_ID and a.EP_NAME = ? ",epname);
+		return one == null ? "" : one.getStr("qyid");
+	}
+	
+	public String getZysqclid (String csname,String czname){
+		String str = "select b.id ";
+		str += "from Z_WOBO_TRANSFER_PLAN_PT a,Z_SYNC_UPLOAD_FLOW_PT b ";
+		str += "where a.TP_ID = b.TP_ID and b.method = 'saveKsldSq' and len(b.id) > 10 ";
+		str += "and a.EN_NAME_CS = ? and a.EN_NAME_CZ = ? ";
+		str += "order by b.sysdate desc  ";
+		Record one = Db.findFirst(str,csname,czname);
+		return one == null ? "" : one.getStr("id");
+	}
+	
+	public String getXz(String bigId,String smallId){
+		Record one = Db.findFirst("select character from z_wobo_overviewlist where big_category_id = ? and samll_category_id =? ",bigId,smallId);
+		return one == null ? "T" : one.getStr("character").substring(0,1);
 	}
 }

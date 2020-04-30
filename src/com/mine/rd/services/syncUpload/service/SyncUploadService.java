@@ -114,7 +114,7 @@ public class SyncUploadService  extends BaseService{
 				json.put("wfycrq", map.get("actiondate"));  //yyyy-mm-dd hh:mm:ss
 				
 				json.put("ycsxzqhdm", map.get("regcodecs"));
-//				json.put("qyid", "");
+				json.put("qyid", dao.getQyid(map.get("en_id_cs").toString()));
 				json.put("wfycdwmc", map.get("en_name_cs"));
 				json.put("wfycdwdz", map.get("csdz"));
 				json.put("wfycdwlxr", map.get("linkman"));
@@ -129,7 +129,7 @@ public class SyncUploadService  extends BaseService{
 				json.put("ysdwdlyszh", map.get("ys_zz"));
 				
 				json.put("yrsxzqhdm", map.get("regcodecz"));
-//				json.put("jsqyid", "");
+				json.put("jsqyid", dao.getQyid(map.get("en_id_cz").toString()));
 				json.put("jsqyxkz", map.get("licenseNo"));
 				json.put("wfjsdwmc", map.get("en_name_cz"));
 				json.put("wfjsdz", map.get("czdz"));
@@ -139,12 +139,40 @@ public class SyncUploadService  extends BaseService{
 				
 				JSONArray arr = new JSONArray();
 				List<Map<String,Object>> list = dao.getBillList(tbId);
+				String shape = "";
 				for(Map<String ,Object> item : list){
 					JSONObject tmp = new JSONObject();
 					tmp.put("fwmc", item.get("d_name"));
-					tmp.put("fwlb", item.get("big_category_id"));
+					tmp.put("fwlb", item.get("big_category_id").toString().substring(2));
 					tmp.put("fwdm", item.get("samll_category_id"));
-					tmp.put("xt", item.get("w_shape"));
+					if ("固态".equals(item.get("w_shape"))){
+						shape = "S";
+					}
+					if ("固体".equals(item.get("w_shape"))){
+						shape = "S";
+					}
+					else if ("半固态".equals(item.get("w_shape"))){
+						shape = "SS";
+					}
+					else if ("半固体".equals(item.get("w_shape"))){
+						shape = "SS";
+					}
+					else if ("液态".equals(item.get("w_shape"))){
+						shape = "L";
+					}
+					else if ("液体".equals(item.get("w_shape"))){
+						shape = "L";
+					}
+					else if ("气态".equals(item.get("w_shape"))){
+						shape = "G";
+					}
+					else if ("气体".equals(item.get("w_shape"))){
+						shape = "G";
+					}
+					else{
+						shape = item.get("w_shape").toString();
+					}
+					tmp.put("xt", shape);
 					tmp.put("xz", item.get("character"));
 					tmp.put("bzlx", "");
 					tmp.put("bzsl", "");
@@ -424,9 +452,11 @@ public class SyncUploadService  extends BaseService{
 		str = myDecoder(str);
 //		net.sf.json.JSONObject jsonObject_param=net.sf.json.JSONObject.fromObject(str);
 		Map<String,Object> jsonObject_param = JsonMyKit.parse(str, Map.class);
+		json.put("zysqclid", dao.getZysqclid(jsonObject_param.get("wfycdwmc").toString(), jsonObject_param.get("wfjsdwmc").toString()));
 		json.put("wfycrq", jsonObject_param.get("wfycrq")+" 00:00:00");
 		json.put("ycsxzqhdm", jsonObject_param.get("ycsxzqhdm"));
 		json.put("wfycdwmc", jsonObject_param.get("wfycdwmc"));
+		json.put("qyid", dao.getQyidByName(jsonObject_param.get("wfycdwmc").toString()));
 		json.put("wfycdwdz", jsonObject_param.get("wfycdwdz"));
 		json.put("wfycdwlxr", jsonObject_param.get("wfycdwlxr"));
 		json.put("fwycdwlxrsj", jsonObject_param.get("fwycdwlxrsj"));
@@ -441,19 +471,82 @@ public class SyncUploadService  extends BaseService{
 		json.put("wfjsdz", jsonObject_param.get("wfjsdz"));
 		json.put("wfjsdwlxr", jsonObject_param.get("wfjsdwlxr"));
 		json.put("wfjsdwlxrsj", jsonObject_param.get("wfjsdwlxrsj"));
+		json.put("jsqyid", getJsqyid(jsonObject_param.get("wfjsdwmc").toString(), jsonObject_param.get("fwjsdwwxfwjyxkzh").toString()));
+		
 		List<Map<String,Object>> list = (List<Map<String, Object>>) jsonObject_param.get("wxfw");
 		JSONArray arr = new JSONArray();
+		String lyczfs = "";
+		String lb = "";
 		for(Map<String,Object> map:list){
 			JSONObject tmp = new JSONObject();
 			tmp.put("zysl", map.get("zysl"));
 			tmp.put("jldw", map.get("jldw"));
 			tmp.put("fwmc", map.get("wxfwmc"));
 			tmp.put("fwdm", map.get("wxfwdm"));
-			tmp.put("fwlb", map.get("wxfwdm").toString().substring(map.get("wxfwdm").toString().length()-2));
+			lb = map.get("wxfwdm").toString().substring(map.get("wxfwdm").toString().length()-2);
+			tmp.put("fwlb", lb);
 			tmp.put("xt", "S");
 			tmp.put("bz", "无");
 			tmp.put("bzsl", "0");
-			tmp.put("lyczfs", "无");
+			tmp.put("xz", dao.getXz("HW"+lb, map.get("wxfwdm").toString()));
+			if ("03".equals(map.get("lb"))) {
+				lyczfs = "R15";
+			}
+			else if("06".equals(map.get("lb"))){
+				lyczfs = "R2";
+			}
+			else if("08".equals(map.get("lb"))){
+				lyczfs = "R9";
+			}
+			else if("09".equals(map.get("lb"))){
+				lyczfs = "R9";
+			}
+			else if("11".equals(map.get("lb"))){
+				lyczfs = "R8";
+			}
+			else if("12".equals(map.get("lb"))){
+				lyczfs = "R15";
+			}
+			else if("12".equals(map.get("lb"))){
+				lyczfs = "R15";
+			}
+			else if("13".equals(map.get("lb"))){
+				lyczfs = "R3";
+			}
+			else if("16".equals(map.get("lb"))){
+				lyczfs = "R15";
+			}
+			else if("17".equals(map.get("lb"))){
+				lyczfs = "R4";
+			}
+			else if("18".equals(map.get("lb"))){
+				lyczfs = "D1";
+			}
+			else if("22".equals(map.get("lb"))){
+				lyczfs = "R4";
+			}
+			else if("23".equals(map.get("lb"))){
+				lyczfs = "R4";
+			}
+			else if("29".equals(map.get("lb"))){
+				lyczfs = "R4";
+			}
+			else if("34".equals(map.get("lb"))){
+				lyczfs = "R6";
+			}
+			else if("46".equals(map.get("lb"))){
+				lyczfs = "R4";
+			}
+			else if("49".equals(map.get("lb"))){
+				lyczfs = "R15";
+			}
+			else if("50".equals(map.get("lb"))){
+				lyczfs = "R8";
+			}
+			else{
+				lyczfs = "R15";
+			}
+			tmp.put("lyczfs", lyczfs);
 			arr.put(tmp);
 		}
 		json.put("fwsz", arr);
@@ -539,6 +632,19 @@ public class SyncUploadService  extends BaseService{
 		}
 		if(controller.getMyParam("method") != null && !"".equals(controller.getMyParam("method"))){
 			method =  controller.getMyParam("method").toString() ;
+			if ("saveKsldSq".equals(method)){
+				Map<String,Object> jsonObject_param = JsonMyKit.parse(str, Map.class);
+//				String xkz = "1310260018";
+//				String name ="河北欣芮再生资源利用有限公司";
+				String xkz = jsonObject_param.get("jsdwxkzbh").toString();
+				String name = jsonObject_param.get("wfjsdwmc").toString();
+				String jsqyid = getJsqyid(name, xkz);
+//				System.out.println(jsqyid);
+				JSONObject json=new JSONObject();
+				json.put("qyid", dao.getQyid(controller.getMyParam("EP_ID").toString()));
+				json.put("jsqyid", jsqyid);
+				str = str.substring(0,1) + json.toString().substring(1,json.toString().length()-1)+"," + str.substring(1);
+			}
 		}
 		if(controller.getMyParam("url") != null && !"".equals(controller.getMyParam("url"))){
 			wsdl =  controller.getMyParam("url").toString() ;
@@ -685,5 +791,20 @@ public class SyncUploadService  extends BaseService{
 		List<Map<String,Object>> initPtInfoList = new ArrayList<Map<String,Object>>();
 		initPtInfoList.add(initPtInfo);
 		controller.setAttr("initPtInfoList", initPtInfoList);
+	}
+	
+	private String getJsqyid(String name,String xkz) throws Exception{
+		JSONObject json=new JSONObject();
+		json.put("dwmc", name);
+		json.put("xkzbh", xkz);
+		Object[] result = this.myClient(json.toString(), "getXkz",KSTranServiceUrl);
+		String res = result[0].toString();
+		@SuppressWarnings("unchecked")
+		List<Map<String,Object>> list = JsonMyKit.parse(res, List.class);
+		String qyid = "";
+		if (list.size() > 0){
+			qyid = list.get(0).get("qyid").toString();
+		}
+		return qyid;
 	}
 }
