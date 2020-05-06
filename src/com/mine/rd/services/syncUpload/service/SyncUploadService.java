@@ -553,7 +553,7 @@ public class SyncUploadService  extends BaseService{
 //		System.out.println(json.toString());
 		Object[] result = this.myClient(json.toString(), "saveKsld",KSTranServiceUrl);
 		String res = result[0].toString();
-//		System.out.println(res);
+		System.out.println("跨省联单返回信息: "+res);
 		controller.renderJson(res);
 	}
 	

@@ -150,7 +150,7 @@ public class SyncUploadDao extends BaseDao {
 	public String getZysqclid (String csname,String czname){
 		String str = "select b.id ";
 		str += "from Z_WOBO_TRANSFER_PLAN_PT a,Z_SYNC_UPLOAD_FLOW_PT b ";
-		str += "where a.TP_ID = b.TP_ID and b.method = 'saveKsldSq' and len(b.id) > 10 ";
+		str += "where a.TP_ID = b.TP_ID and b.method = 'saveKsldSqSp' and len(b.id) > 10 ";
 		str += "and a.EN_NAME_CS = ? and a.EN_NAME_CZ = ? ";
 		str += "order by b.sysdate desc  ";
 		Record one = Db.findFirst(str,csname,czname);
